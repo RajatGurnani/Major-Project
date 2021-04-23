@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Simple : MonoBehaviour
 {
@@ -32,10 +31,7 @@ public class Simple : MonoBehaviour
     {
         inputX = Input.GetAxisRaw("Horizontal") * steerForce;
         inputY = Input.GetAxisRaw("Vertical") * moveForce;
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             slowMo = !slowMo;

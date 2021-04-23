@@ -14,7 +14,7 @@ public class GeneralSensors : MonoBehaviour
     [Tooltip("Seperation Angle between two sensors")]
     public float sensorSpacingAngle = 30;
 
-    public bool[] sensorBlocked;
+    public bool showRays=false;
 
     void Update()
     {
@@ -26,14 +26,16 @@ public class GeneralSensors : MonoBehaviour
         for (int i = 0; i < sensorCount; i++)
         {
             Ray ray = new Ray(transform.position + transform.up * sensorHeightAboveGround, Quaternion.AngleAxis((-sweepAngle / 2) + i * sensorSpacingAngle, transform.up) * transform.forward);
-
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, sensorSensingDistance))
+            if (showRays)
             {
-                Debug.DrawLine(ray.origin, ray.origin + ray.direction * sensorSensingDistance, Color.red);
-            }
-            else
-            {
-                Debug.DrawLine(ray.origin, ray.origin + ray.direction * sensorSensingDistance, Color.green);
+                if (Physics.Raycast(ray, out RaycastHit hitInfo, sensorSensingDistance))
+                {
+                    Debug.DrawLine(ray.origin, ray.origin + ray.direction * sensorSensingDistance, Color.red);
+                }
+                else
+                {
+                    Debug.DrawLine(ray.origin, ray.origin + ray.direction * sensorSensingDistance, Color.green);
+                }
             }
         }
     }
