@@ -8,7 +8,6 @@ public class BotParameters : MonoBehaviour
     public Rigidbody[] wheels;
     Vector3[] initialPosition;
     public Transform targetTransform;
-
     private void Start()
     {
         rbBot = GetComponent<Rigidbody>();
@@ -50,6 +49,14 @@ public class BotParameters : MonoBehaviour
         {
             wheels[i].position = initialPosition[i] + randomPositionOffset;
         }
-        targetTransform.localPosition = new Vector3(Random.Range(-5f, 5f), -0.25f, Random.Range(-5f, 5f));
+        if (Unity.MLAgents.Academy.Instance.EnvironmentParameters.GetWithDefault("cases", 0) == 1)  // ciruculam learning
+        {
+            targetTransform.localPosition = new Vector3(Random.Range(-5f, 5f), -0.25f, Random.Range(-5f, 5f));
+        }
+        else
+        {
+            targetTransform.localPosition = Vector3.zero + randomPositionOffset;
+        }
+        
     }
 }
