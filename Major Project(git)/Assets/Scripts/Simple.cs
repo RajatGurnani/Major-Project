@@ -24,6 +24,8 @@ public class Simple : MonoBehaviour
         JointMotor rightMotor = hjRight.motor;
         leftMotor.targetVelocity = inputY + (inputX * 1);
         rightMotor.targetVelocity = inputY + (inputX * -1);
+        leftMotor.targetVelocity = 0;
+        rightMotor.targetVelocity = 0;
         hjLeft.motor = leftMotor;
         hjRight.motor = rightMotor;
     }

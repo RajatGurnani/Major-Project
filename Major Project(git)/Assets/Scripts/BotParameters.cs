@@ -8,6 +8,7 @@ public class BotParameters : MonoBehaviour
     public Rigidbody[] wheels;
     Vector3[] initialPosition;
     public Transform targetTransform;
+    float cases;
     private void Start()
     {
         rbBot = GetComponent<Rigidbody>();
@@ -17,6 +18,7 @@ public class BotParameters : MonoBehaviour
             initialPosition[i] = wheels[i].position;
         }
     }
+    
     public Vector3 GetVelocity()
     {
         return transform.InverseTransformDirection(rbBot.velocity);
@@ -33,7 +35,7 @@ public class BotParameters : MonoBehaviour
     }
     public void EpisodeReset()
     {
-        Vector3 randomPositionOffset = new Vector3(1, 0, 1) * Random.Range(-1f, 1f);
+        Vector3 randomPositionOffset = new Vector3(1, 0, 1) * Random.Range(-4f, 4f);
         rbBot.angularVelocity = Vector3.zero;
         rbBot.velocity = Vector3.zero;
 
@@ -49,14 +51,9 @@ public class BotParameters : MonoBehaviour
         {
             wheels[i].position = initialPosition[i] + randomPositionOffset;
         }
-        if (Unity.MLAgents.Academy.Instance.EnvironmentParameters.GetWithDefault("cases", 0) == 1)  // ciruculam learning
-        {
-            targetTransform.localPosition = new Vector3(Random.Range(-5f, 5f), -0.25f, Random.Range(-5f, 5f));
-        }
-        else
-        {
-            targetTransform.localPosition = Vector3.zero + randomPositionOffset;
-        }
+        cases = (float)Unity.MLAgents.Academy.Instance.EnvironmentParameters.GetWithDefault("cases", 5); 
+        targetTransform.localPosition = new Vector3(Random.Range(-1*cases, cases), -0.25f, Random.Range(-1*cases, cases));
+        
         
     }
 }

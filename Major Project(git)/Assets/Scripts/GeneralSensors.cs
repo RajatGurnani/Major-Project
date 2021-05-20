@@ -18,9 +18,9 @@ public class GeneralSensors : MonoBehaviour
 
     void Update()
     {
-        SensorExection();
+        SensorExecution();
     }
-    void SensorExection()
+    void SensorExecution()
     {
         float sweepAngle = (sensorCount-1) * sensorSpacingAngle;
         for (int i = 0; i < sensorCount; i++)
