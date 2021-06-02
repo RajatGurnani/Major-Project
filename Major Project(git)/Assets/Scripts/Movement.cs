@@ -17,11 +17,6 @@ public class Movement : MonoBehaviour
         hjLeft.motor = leftMotor;
         hjRight.motor = rightMotor;
     }
-    /*private void Update()
-    {
-        rightSpeed = Input.GetAxisRaw("Horizontal");
-        leftSpeed = Input.GetAxisRaw("Vertical");
-    }*/
     private void FixedUpdate()
     {
         MoveMotors();
