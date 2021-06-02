@@ -8,17 +8,22 @@ public class Balance_Bot : Agent
     public Movement botMovement;
 
     const float maxDistance = 15.0f;     // Maximum possible distance
+
     float angleReward;                   // Reward for angle position
     float distanceReward;                // closer to be for more reward
     float velocityDiscount;              // forces velocity to be lower if distance decreases
     float prevDistance;
-    bool targetReached = false;
-    float matchingVelocityReward = 0f;
-    float cases;
-    float alignmentReward;
-    //float reward_sum = 0;
-    const float velocityGoal = 0.8f;  
+    public bool targetReached = false, botFell = false, botCollided = false;
 
+    float alignmentReward;
+    float matchingVelocityReward = 0f;
+    const float velocityGoal = 0.8f;
+
+    Vector3 navigationGoal = Vector3.zero;
+    public bool isNavigation = false;
+    public Navigation_Bot navRef;
+    //float reward_sum = 0;
+    #region BotInfo - Rigidbody ,Transforms
     [SerializeField]
     Transform bot, rightWheel, leftWheel;
     Rigidbody rbBot, rbRightWheel, rbLeftWheel;
@@ -26,9 +31,10 @@ public class Balance_Bot : Agent
     Vector3 initialPosBot, initialPosRightWheel, initialPosLeftWheel;
     Vector3 initialRotBot, initialRotRightWheel, initialRotLeftWheel;
     JointMotor resetMotor;
-
+    #endregion
     void Start()
     {
+        navRef = GetComponentInChildren<Navigation_Bot>();
         rbBot = bot.GetComponent<Rigidbody>();
         rbRightWheel = rightWheel.GetComponent<Rigidbody>();
         rbLeftWheel = leftWheel.GetComponent<Rigidbody>();
@@ -49,48 +55,63 @@ public class Balance_Bot : Agent
     }
     public override void OnEpisodeBegin()
     {
-        if (targetReached)
+        if (isNavigation)
         {
-            SetTarget();
-            targetReached = false;
-        }                                                         
+
+        }
         else
         {
-            // Reset the scene
-            EpisodeReset();
+            if (targetReached)
+            {
+                SetRandomTarget();
+                targetReached = false;
+            }
+            else
+            {
+                // when bot falls or time expires 
+                EpisodeReset();
+            }
+            prevDistance = maxDistance;
+            distanceReward = 0;
         }
-        prevDistance = maxDistance;
-        distanceReward = 0;
-        //reward_sum = 0;
     }
     public override void CollectObservations(VectorSensor sensor)
     {
+        if (isNavigation)
+        {
+            sensor.AddObservation(navRef.intermediateGoal.magnitude*5);   //Distance to intermediateGoal
+            sensor.AddObservation(navRef.intermediateGoal);        // Calculate the direction to incoming checkpoint
+        }
+        else
+        {
+            sensor.AddObservation(GetDistance());                                                    // Distance to Target in case of no Navigation
+            sensor.AddObservation((CurrentTargetPosition() - CurrentBotPosition()).normalized);      // Calculate the direction to Target in case of no Navigation
+        }
+        sensor.AddObservation(GetVelocity().normalized);                  // Current Bot Velocity in Local Space  
+        sensor.AddObservation(GetSignedAngularVelocity() / 360.0f);       // Current angular velocity   -305 to 298
+        sensor.AddObservation(GetSignedAngle() / 180.0f);                 // Pitch & Yaw Angle 
+        if (isNavigation)
+        {
+            sensor.AddObservation(Vector2.Dot(navRef.intermediateGoal,new Vector2(transform.forward.x,transform.forward.z)));                            // Alignment between bot forward direction and target direction
+        }
+        else
+        {
+            sensor.AddObservation(GetAlignment());                            // Alignment between bot forward direction and target direction
+        }
+    }
 
-        /******* THIS IS THE FINAL SCRIPT
-
-       MAKE CHANGES IN THIS SCRIPT ONLY
-
-       AND DO THE TRAINING ON IMPROVED BALANCE SCENE  *****/
-
-        // Distance to waypoint
-        sensor.AddObservation(GetDistance());                         
-        // Calculate the direction to incoming checkpoint
-        sensor.AddObservation((CurrentTargetPosition() - CurrentBotPosition()).normalized);
-        // Current velocity  
-        sensor.AddObservation(GetVelocity().normalized);
-        // Current angular velocity   -305 to 298
-        sensor.AddObservation(GetSignedAngularVelocity()/360.0f);
-        // Pitch & Yaw Angle 
-        sensor.AddObservation(GetSignedAngle()/180.0f);
-        // Alignment
-        sensor.AddObservation(GetAlingment());                        
-    }                          
-        
     public override void OnActionReceived(float[] vectorAction)
     {
         botMovement.leftSpeed = Mathf.Clamp(vectorAction[0], -1f, 1f);
         botMovement.rightSpeed = Mathf.Clamp(vectorAction[1], -1f, 1f);
 
+        if (!isNavigation)
+        {
+            GetRewards();
+        }
+    }
+    void GetRewards()
+    {
         float distanceError = GetDistance();
         float velocityError = Mathf.Lerp(0.0f, 1.0f, Mathf.InverseLerp(0.0f, 3.0f, GetVelocity().magnitude)); // scaling value to 0 to 1
         float angleError = Mathf.Abs(GetSignedAngle().x);
@@ -98,20 +119,22 @@ public class Balance_Bot : Agent
         // Reward
         if (angleError >= 45 || transform.localPosition.y < -1.0f) // Falling Condition and if bot falls from platform and also it will not far if it is not balanced
         {
+            Debug.Log("The fall");
+            botFell = true;
             AddReward(-1.0f);
             EndEpisode();
         }
         // Alignment reward
-        alignmentReward = GetAlingment();
+        alignmentReward = GetAlignment();
 
         //Unity.MLAgents.Academy.Instance.EnvironmentParameters.GetWithDefault("cases", 0)
         if (distanceError <= 0.5f)
         {
+            Debug.Log("Balance");
             targetReached = true;
             AddReward(1.0f); //high positive reward if it reaches goal
-            SetTarget();
+            SetRandomTarget();
             targetReached = false;
-            
         }
 
         //distanceReward = 1 - Mathf.Pow(distanceError/maxDistance,0.4f); // decreasing function
@@ -123,23 +146,26 @@ public class Balance_Bot : Agent
         {
             distanceReward = -0.1f;
         }
-        //distanceReward *= Mathf.Abs(DistanceExponent(distanceError) - DistanceExponent(prevDistance));  // value aroun e-06
         AddReward(distanceReward);
         prevDistance = distanceError;
-        //Debug.Log(GetVelocity().magnitude);
-        //velocityDiscount = Mathf.Pow(1 - Mathf.Max(velocityError, 0.1f), 1 / Mathf.Max(distanceError / maxDistance, 0.2f))/10;
-        angleReward = Mathf.Clamp(1.0f - 0.1f * angleError - 0.01f * angularVelocityError, 0.0f, 1.0f)/10;
+        velocityDiscount = Mathf.Pow(1 - Mathf.Max(velocityError, 0.1f), 1 / Mathf.Max(distanceError / maxDistance, 0.2f)) / 10;
+        angleReward = Mathf.Clamp(1.0f - 0.1f * angleError - 0.01f * angularVelocityError, 0.0f, 1.0f) / 10;
         // reward_sum += alignmentReward * angleReward * velocityDiscount - 0.1f;
-        //Debug.Log(reward_sum);
-        
         matchingVelocityReward = GetMatchingVelocityReward();
-        //Debug.Log(angleError);
         AddReward(alignmentReward * angleReward * matchingVelocityReward - 0.1f);
     }
-
+    public void ResetBot(Vector3 startPos)
+    {
+        Vector3 offset = new Vector3(startPos.x, 0, startPos.z) - new Vector3(initialPosBot.x, 0, initialPosBot.z);
+        ResetBotCommon(offset);
+    }
     public void ResetBot()
     {
         Vector3 offset = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+        ResetBotCommon(offset);
+    }
+    void ResetBotCommon(Vector3 offset)
+    {
         rbBot.velocity = Vector3.zero;
         rbRightWheel.velocity = Vector3.zero;
         rbLeftWheel.velocity = Vector3.zero;
@@ -159,20 +185,15 @@ public class Balance_Bot : Agent
         rightJoint.motor = resetMotor;
         leftJoint.motor = resetMotor;
     }
-    public void SetTarget()
+    public void SetRandomTarget()
     {
-        cases = (float)Unity.MLAgents.Academy.Instance.EnvironmentParameters.GetWithDefault("cases", 5);
+        float cases = (float)Unity.MLAgents.Academy.Instance.EnvironmentParameters.GetWithDefault("cases", 5);
         target.localPosition = new Vector3(Random.Range(-cases, cases), -0.25f, Random.Range(-cases, cases));
     }
     public void EpisodeReset()
     {
         ResetBot();
-        SetTarget();
-    }
-    public float GetMatchingVelocityReward()   // Forces bot to match velocity of 1.5
-    {
-        float velDeltaMagnitude = Mathf.Clamp(Vector3.Distance(GetVelocity(),transform.forward.normalized * velocityGoal),0,1);
-        return Mathf.Pow(1 - Mathf.Pow(velDeltaMagnitude / velocityGoal, 2), 2);
+        SetRandomTarget();
     }
     public Vector2 CurrentBotPosition()
     {
@@ -181,6 +202,11 @@ public class Balance_Bot : Agent
     public Vector2 CurrentTargetPosition()
     {
         return new Vector2(target.localPosition.x, target.localPosition.z);
+    }
+    public float GetMatchingVelocityReward()   // Forces bot to match velocity of 1.5
+    {
+        float velDeltaMagnitude = Mathf.Clamp(Vector3.Distance(GetVelocity(), transform.forward * velocityGoal), 0, 1);
+        return Mathf.Pow(1 - Mathf.Pow(velDeltaMagnitude / velocityGoal, 2), 2);
     }
     public float GetDistance()
     {
@@ -192,22 +218,20 @@ public class Balance_Bot : Agent
     }
     public Vector2 GetSignedAngle()
     {
-        return new Vector2(Vector3.SignedAngle(Vector3.up, transform.up, transform.right),
-                            Vector3.SignedAngle(Vector3.right, transform.right, transform.up));
+        float pitchAngle = Vector3.SignedAngle(Vector3.up, transform.up, transform.right);
+        float yawAngle = Vector3.SignedAngle(Vector3.right, transform.right, transform.up);
+        return new Vector2(pitchAngle, yawAngle);
     }
     public Vector2 GetSignedAngularVelocity()
     {
-        return Mathf.Rad2Deg * new Vector2(transform.InverseTransformDirection(rbBot.angularVelocity).x,
-                                           transform.InverseTransformDirection(rbBot.angularVelocity).y);
+        Vector3 temp = transform.InverseTransformDirection(rbBot.angularVelocity);
+        return Mathf.Rad2Deg * new Vector2(temp.x, temp.y);
     }
-
-    public float GetAlingment()
+    public float GetAlignment()
     {
-        Vector2 vecForward = new Vector2(transform.forward.x,transform.forward.z);
+        Vector2 vecForward = new Vector2(transform.forward.x, transform.forward.z);
         Vector2 vec2Direction = (CurrentTargetPosition() - CurrentBotPosition()).normalized;
-        
-
-        return Vector2.Dot(vec2Direction,vecForward);
+        return Vector2.Dot(vec2Direction, vecForward);
     }
     public override void Heuristic(float[] actionsOut)
     {
@@ -216,8 +240,16 @@ public class Balance_Bot : Agent
         actionsOut[0] = inputY + inputX;
         actionsOut[1] = inputY - inputX;
     }
-    public float DistanceExponent(float val)
+    private void OnCollisionEnter(Collision collision)
     {
-        return 1 - Mathf.Pow(val/maxDistance,0.4f);
+        if (collision.collider.CompareTag("Obstacle") || collision.collider.CompareTag("Wall"))
+        {
+            Debug.Log("Hit");
+            botCollided = true;
+        }
+        if (collision.collider.CompareTag("Ground"))
+        {
+            botFell = true;
+        }
     }
 }

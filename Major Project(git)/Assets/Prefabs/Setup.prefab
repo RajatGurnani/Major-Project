@@ -492,7 +492,7 @@ MonoBehaviour:
     VectorActionSize: 02000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 099c3f6aad5ace44d812fcef32296a93, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: Balance_imp
@@ -516,9 +516,14 @@ MonoBehaviour:
   MaxStep: 5000
   target: {fileID: 8015978622025684815}
   botMovement: {fileID: 8015978622711380083}
-  bot: {fileID: 0}
-  rightWheel: {fileID: 0}
-  leftWheel: {fileID: 0}
+  targetReached: 0
+  botFell: 0
+  botCollided: 0
+  isNavigation: 0
+  navRef: {fileID: 0}
+  bot: {fileID: 8015978622711380084}
+  rightWheel: {fileID: 8015978621886909583}
+  leftWheel: {fileID: 8015978623453483142}
 --- !u!114 &8015978622711380080
 MonoBehaviour:
   m_ObjectHideFlags: 0
