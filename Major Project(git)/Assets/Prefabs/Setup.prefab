@@ -126,7 +126,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 1.0000002, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.7999995, y: -0.5, z: 0}
+  m_ConnectedAnchor: {x: 0.79999924, y: -0.5, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -176,7 +176,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8015978622025684814}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -2.57}
+  m_LocalPosition: {x: -0.25, y: 0, z: 1.52}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 8015978622663400716}
@@ -263,7 +263,6 @@ Transform:
   - {fileID: 8015978622711380084}
   - {fileID: 8015978621886909583}
   - {fileID: 8015978623453483142}
-  - {fileID: 8015978622742320058}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -280,14 +279,13 @@ GameObject:
   - component: {fileID: 8015978622711380086}
   - component: {fileID: 8015978622711380089}
   - component: {fileID: 8015978622711380092}
-  - component: {fileID: 8015978622711380088}
   - component: {fileID: 8015978622711380091}
-  - component: {fileID: 8015978622711380090}
   - component: {fileID: 8015978622711380093}
   - component: {fileID: 8015978622711380083}
   - component: {fileID: 8015978622711380082}
   - component: {fileID: 8015978622711380085}
   - component: {fileID: 8015978622711380080}
+  - component: {fileID: 375977138}
   m_Layer: 0
   m_Name: Balance_Bot
   m_TagString: Untagged
@@ -387,26 +385,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
---- !u!114 &8015978622711380088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8015978622711380095}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94be54d112614ab488140abdd5dd715c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rbRight: {fileID: 8015978621886909582}
-  rbLeft: {fileID: 8015978623453483140}
-  moveForce: 500
-  steerForce: 5000
-  breakForce: 0
-  hjRight: {fileID: 8015978621886909586}
-  hjLeft: {fileID: 8015978623453483143}
+  m_CollisionDetection: 3
 --- !u!114 &8015978622711380091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -424,18 +403,6 @@ MonoBehaviour:
   sensorHeightAboveGround: 0
   sensorSpacingAngle: 30
   showRays: 0
---- !u!114 &8015978622711380090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8015978622711380095}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63672e48af770c94caf3fa5f8e05c50c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8015978622711380093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,7 +410,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8015978622711380095}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4d12aa54212de4439bcaa4a4eba2cee, type: 3}
   m_Name: 
@@ -492,7 +459,7 @@ MonoBehaviour:
     VectorActionSize: 02000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
-  m_Model: {fileID: 5022602860645237092, guid: 099c3f6aad5ace44d812fcef32296a93, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 03e1bfc20318619409b1c2916037c8e4, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: Balance_imp
@@ -513,7 +480,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 0
   target: {fileID: 8015978622025684815}
   botMovement: {fileID: 8015978622711380083}
   targetReached: 0
@@ -538,36 +505,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 1
   TakeActionsBetweenDecisions: 1
---- !u!1 &8015978622742320061
-GameObject:
+--- !u!114 &375977138
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8015978622742320058}
-  m_Layer: 0
-  m_Name: Point
-  m_TagString: Untagged
-  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8015978622742320058
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8015978622742320061}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8015978622663400716}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 8015978622711380095}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ae62f0168b083d4790d19096b25c9af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bot: {fileID: 8015978622711380084}
+  rightWheel: {fileID: 8015978621886909583}
+  leftWheel: {fileID: 8015978623453483142}
 --- !u!1 &8015978622899809587
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,8 +547,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8015978622899809587}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
-  m_LocalScale: {x: 1, y: 2, z: 1}
+  m_LocalPosition: {x: 0, y: -1, z: 0.1}
+  m_LocalScale: {x: 1.25, y: 1, z: 1.25}
   m_Children: []
   m_Father: {fileID: 8015978622663400716}
   m_RootOrder: 1
@@ -885,7 +837,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 1.0000002, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -1.2000005, y: -0.5, z: 0}
+  m_ConnectedAnchor: {x: -1.2000008, y: -0.5, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0

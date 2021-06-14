@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 9155507684023045509}
   - component: {fileID: 833849706460229552}
   - component: {fileID: 1625091574019777281}
+  - component: {fileID: 1881158272}
   m_Layer: 0
   m_Name: Navigation_Bot
   m_TagString: Untagged
@@ -64,7 +65,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 1, z: 5}
-  m_Children: []
+  m_Children:
+  - {fileID: 4234721163286938846}
   m_Father: {fileID: 8015978622711380084}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -83,9 +85,9 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
-  target: {fileID: 8015978622025684815}
-  startPoint: {fileID: 0}
+  MaxStep: 5000
+  endPoint: {fileID: 8015978622025684815}
+  startPoint: {fileID: 6062676241990074787}
   obstacles:
   - {fileID: 2774482572045533051}
   - {fileID: 6415928592561507684}
@@ -93,9 +95,9 @@ MonoBehaviour:
   - {fileID: 5626380381498500129}
   - {fileID: 7553974399839590739}
   - {fileID: 4798006176492245780}
-  botCollided: 0
-  botFell: 0
+  intermediateGoal: {x: -1, y: -1}
   seeIntermediatePoint: 0
+  obstacleScaleMinMax: {x: 5, y: 11}
 --- !u!114 &833849706460229552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,16 +114,16 @@ MonoBehaviour:
   m_DetectableTags:
   - Wall
   - Obstacle
-  m_RaysPerDirection: 3
-  m_MaxRayDegrees: 70
-  m_SphereCastRadius: 0.5
-  m_RayLength: 20
+  m_RaysPerDirection: 6
+  m_MaxRayDegrees: 90
+  m_SphereCastRadius: 0
+  m_RayLength: 10
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
-  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+  rayMissColor: {r: 0.63234246, g: 0.9245283, b: 0.63234246, a: 1}
   m_StartVerticalOffset: 0
   m_EndVerticalOffset: 0
 --- !u!114 &1625091574019777281
@@ -137,17 +139,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 0
+    VectorObservationSize: 8
     NumStackedVectorObservations: 1
-    VectorActionSize: 01000000
+    VectorActionSize: 02000000
     VectorActionDescriptions: []
-    VectorActionSpaceType: 0
+    VectorActionSpaceType: 1
   m_Model: {fileID: 0}
-  m_InferenceDevice: 0
+  m_InferenceDevice: 1
   m_BehaviorType: 0
-  m_BehaviorName: My Behavior
+  m_BehaviorName: Navigation
   TeamId: 0
   m_UseChildSensors: 1
+--- !u!114 &1881158272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812170234224568281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 1
+  TakeActionsBetweenDecisions: 1
 --- !u!1 &1054883189843371275
 GameObject:
   m_ObjectHideFlags: 0
@@ -338,6 +354,65 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2296777993002946750
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4234721163286938846}
+  - component: {fileID: 7877335755268185732}
+  m_Layer: 0
+  m_Name: Back Rays
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &4234721163286938846
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2296777993002946750}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 775133847477389045}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &7877335755268185732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2296777993002946750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: RayPerceptionSensor
+  m_DetectableTags:
+  - Wall
+  - Obstacle
+  m_RaysPerDirection: 1
+  m_MaxRayDegrees: 45
+  m_SphereCastRadius: 0
+  m_RayLength: 10
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  m_ObservationStacks: 1
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+  m_StartVerticalOffset: 0
+  m_EndVerticalOffset: 0
 --- !u!1 &2573590269218669383
 GameObject:
   m_ObjectHideFlags: 0
@@ -1205,6 +1280,7 @@ GameObject:
   - component: {fileID: 8015978621886909587}
   - component: {fileID: 8015978621886909582}
   - component: {fileID: 8015978621886909586}
+  - component: {fileID: 619639247}
   m_Layer: 0
   m_Name: Right Wheel
   m_TagString: Untagged
@@ -1220,7 +1296,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8015978621886909589}
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.5, y: -0.5, z: 18.06}
+  m_LocalPosition: {x: 0.5, y: -0.5, z: -17.32}
   m_LocalScale: {x: 0.5000006, y: 0.10000021, z: 0.5}
   m_Children: []
   m_Father: {fileID: 8015978622663400716}
@@ -1317,7 +1393,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 1.0000002, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.7999995, y: -0.5, z: 0}
+  m_ConnectedAnchor: {x: 0.7999995, y: -0.5, z: -0.000009536743}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1341,6 +1417,19 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &619639247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8015978621886909589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f8b47f2e97453f42b2fe92a6ac11288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  balanceRef: {fileID: 0}
 --- !u!1 &8015978622025684814
 GameObject:
   m_ObjectHideFlags: 0
@@ -1367,7 +1456,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8015978622025684814}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.46, y: 0, z: -15.66}
+  m_LocalPosition: {x: 0.26, y: 0, z: 17.18}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 8015978622663400716}
@@ -1496,7 +1585,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8015978622711380095}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 18.06}
+  m_LocalPosition: {x: 0, y: 0, z: -17.319998}
   m_LocalScale: {x: 0.5, y: 1, z: 0.2}
   m_Children:
   - {fileID: 8015978623138323826}
@@ -1618,9 +1707,9 @@ MonoBehaviour:
     VectorActionSize: 02000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
-  m_Model: {fileID: 5022602860645237092, guid: d558ab8bbd370ec41ab0e7f266945ea9, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 03e1bfc20318619409b1c2916037c8e4, type: 3}
   m_InferenceDevice: 1
-  m_BehaviorType: 0
+  m_BehaviorType: 2
   m_BehaviorName: Balance_imp
   TeamId: 0
   m_UseChildSensors: 0
@@ -1639,9 +1728,13 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 0
   target: {fileID: 8015978622025684815}
   botMovement: {fileID: 8015978622711380083}
+  targetReached: 0
+  botFell: 0
+  botCollided: 0
+  isNavigation: 1
   navRef: {fileID: 9155507684023045509}
   bot: {fileID: 8015978622711380084}
   rightWheel: {fileID: 8015978621886909583}
@@ -1673,8 +1766,8 @@ GameObject:
   - component: {fileID: 8015978622899809585}
   - component: {fileID: 8015978622899809584}
   m_Layer: 0
-  m_Name: Plane
-  m_TagString: Untagged
+  m_Name: Ground
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1865,6 +1958,7 @@ GameObject:
   - component: {fileID: 8015978623453483141}
   - component: {fileID: 8015978623453483140}
   - component: {fileID: 8015978623453483143}
+  - component: {fileID: 1919606154}
   m_Layer: 0
   m_Name: Left Wheel
   m_TagString: Untagged
@@ -1880,7 +1974,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8015978623453483145}
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.5, y: -0.5, z: 18.06}
+  m_LocalPosition: {x: -0.5, y: -0.5, z: -17.319998}
   m_LocalScale: {x: 0.5000006, y: 0.10000021, z: 0.5}
   m_Children: []
   m_Father: {fileID: 8015978622663400716}
@@ -2001,6 +2095,19 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &1919606154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8015978623453483145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f8b47f2e97453f42b2fe92a6ac11288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  balanceRef: {fileID: 0}
 --- !u!1 &8058776574421362457
 GameObject:
   m_ObjectHideFlags: 0
@@ -2027,7 +2134,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8058776574421362457}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 18}
+  m_LocalPosition: {x: 0, y: -1, z: -17.32}
   m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_Children: []
   m_Father: {fileID: 8015978622663400716}

@@ -87,7 +87,7 @@ public class Balance_Bot : Agent
             sensor.AddObservation(GetDistance());                                                    // Distance to Target in case of no Navigation
             sensor.AddObservation((CurrentTargetPosition() - CurrentBotPosition()).normalized);      // Calculate the direction to Target in case of no Navigation
         }
-        sensor.AddObservation(GetVelocity().normalized);                  // Current Bot Velocity in Local Space  
+        sensor.AddObservation(GetVelocity().normalized);                  // Current Bot Velocity in Local Space  ??
         sensor.AddObservation(GetSignedAngularVelocity() / 360.0f);       // Current angular velocity   -305 to 298
         sensor.AddObservation(GetSignedAngle() / 180.0f);                 // Pitch & Yaw Angle 
         if (isNavigation)
@@ -104,6 +104,7 @@ public class Balance_Bot : Agent
     {
         botMovement.leftSpeed = Mathf.Clamp(vectorAction[0], -1f, 1f);
         botMovement.rightSpeed = Mathf.Clamp(vectorAction[1], -1f, 1f);
+        
 
         if (!isNavigation)
         {
@@ -250,6 +251,13 @@ public class Balance_Bot : Agent
         if (collision.collider.CompareTag("Ground"))
         {
             botFell = true;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Wall")|| other.CompareTag("Obstacle"))
+        {
+            botCollided = true;
         }
     }
 }
