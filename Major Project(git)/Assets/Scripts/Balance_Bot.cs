@@ -14,6 +14,7 @@ public class Balance_Bot : Agent
     float velocityDiscount;              // forces velocity to be lower if distance decreases
     float prevDistance;
     public bool targetReached = false, botFell = false, botCollided = false;
+    int goalcount = 0;
 
     float alignmentReward;
     float matchingVelocityReward = 0f;
@@ -61,6 +62,7 @@ public class Balance_Bot : Agent
         }
         else
         {
+            Unity.MLAgents.Academy.Instance.StatsRecorder.Add("goalcount",goalcount,StatAggregationMethod.Average);
             if (targetReached)
             {
                 SetRandomTarget();
@@ -73,6 +75,7 @@ public class Balance_Bot : Agent
             }
             prevDistance = maxDistance;
             distanceReward = 0;
+            goalcount = 0;
         }
     }
     public override void CollectObservations(VectorSensor sensor)
@@ -87,9 +90,11 @@ public class Balance_Bot : Agent
             sensor.AddObservation(GetDistance());                                                    // Distance to Target in case of no Navigation
             sensor.AddObservation((CurrentTargetPosition() - CurrentBotPosition()).normalized);      // Calculate the direction to Target in case of no Navigation
         }
+        sensor.AddObservation(GetVelocity().magnitude/3.0f);
         sensor.AddObservation(GetVelocity().normalized);                  // Current Bot Velocity in Local Space  ??
         sensor.AddObservation(GetSignedAngularVelocity() / 360.0f);       // Current angular velocity   -305 to 298
         sensor.AddObservation(GetSignedAngle() / 180.0f);                 // Pitch & Yaw Angle 
+        //Debug.Log(GetVelocity().magnitude);
         if (isNavigation)
         {
             sensor.AddObservation(Vector2.Dot(navRef.intermediateGoal,new Vector2(transform.forward.x,transform.forward.z)));                            // Alignment between bot forward direction and target direction
@@ -120,7 +125,7 @@ public class Balance_Bot : Agent
         // Reward
         if (angleError >= 45 || transform.localPosition.y < -1.0f) // Falling Condition and if bot falls from platform and also it will not far if it is not balanced
         {
-            Debug.Log("The fall");
+            //Debug.Log("The fall");
             botFell = true;
             AddReward(-1.0f);
             EndEpisode();
@@ -131,27 +136,26 @@ public class Balance_Bot : Agent
         //Unity.MLAgents.Academy.Instance.EnvironmentParameters.GetWithDefault("cases", 0)
         if (distanceError <= 0.5f)
         {
+            goalcount+=1;
             Debug.Log("Balance");
-            targetReached = true;
             AddReward(1.0f); //high positive reward if it reaches goal
             SetRandomTarget();
-            targetReached = false;
         }
 
         //distanceReward = 1 - Mathf.Pow(distanceError/maxDistance,0.4f); // decreasing function
-        if (distanceError < prevDistance)
+
+        if (prevDistance > distanceError)
         {
-            distanceReward = 0.1f;
+            distanceReward = 0.5f;
         }
         else
         {
-            distanceReward = -0.1f;
+            distanceReward = -0.5f;
         }
         AddReward(distanceReward);
         prevDistance = distanceError;
-        velocityDiscount = Mathf.Pow(1 - Mathf.Max(velocityError, 0.1f), 1 / Mathf.Max(distanceError / maxDistance, 0.2f)) / 10;
+        //velocityDiscount = Mathf.Pow(1 - Mathf.Max(velocityError, 0.1f), 1 / Mathf.Max(distanceError / maxDistance, 0.2f)) / 10;
         angleReward = Mathf.Clamp(1.0f - 0.1f * angleError - 0.01f * angularVelocityError, 0.0f, 1.0f) / 10;
-        // reward_sum += alignmentReward * angleReward * velocityDiscount - 0.1f;
         matchingVelocityReward = GetMatchingVelocityReward();
         AddReward(alignmentReward * angleReward * matchingVelocityReward - 0.1f);
     }

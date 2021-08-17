@@ -126,7 +126,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 1.0000002, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.79999924, y: -0.5, z: 0}
+  m_ConnectedAnchor: {x: 0.7999995, y: -0.5, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -454,12 +454,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 11
+    VectorObservationSize: 12
     NumStackedVectorObservations: 1
     VectorActionSize: 02000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
-  m_Model: {fileID: 5022602860645237092, guid: 03e1bfc20318619409b1c2916037c8e4, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: Balance_imp
@@ -480,7 +480,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
+  MaxStep: 5000
   target: {fileID: 8015978622025684815}
   botMovement: {fileID: 8015978622711380083}
   targetReached: 0
@@ -837,7 +837,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 1.0000002, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -1.2000008, y: -0.5, z: 0}
+  m_ConnectedAnchor: {x: -1.2000005, y: -0.5, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
