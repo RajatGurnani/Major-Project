@@ -1,0 +1,50 @@
+{
+    "cases": {
+        "lesson_num": 6
+    },
+    "Balance": {
+        "checkpoints": [
+            {
+                "steps": 38999943,
+                "file_path": "results\\improved+increment1\\Balance\\Balance-38999943.onnx",
+                "reward": 6542.261687011719,
+                "creation_time": 1621509596.9153974
+            },
+            {
+                "steps": 39499752,
+                "file_path": "results\\improved+increment1\\Balance\\Balance-39499752.onnx",
+                "reward": 7981.651447955827,
+                "creation_time": 1621509953.9949343
+            },
+            {
+                "steps": 39999892,
+                "file_path": "results\\improved+increment1\\Balance\\Balance-39999892.onnx",
+                "reward": 4287.103794642857,
+                "creation_time": 1621510315.692673
+            },
+            {
+                "steps": 40499794,
+                "file_path": "results\\improved+increment1\\Balance\\Balance-40499794.onnx",
+                "reward": 6139.504797204749,
+                "creation_time": 1621510660.5345874
+            },
+            {
+                "steps": 40934550,
+                "file_path": "results\\improved+increment1\\Balance\\Balance-40934550.onnx",
+                "reward": 5373.319695238797,
+                "creation_time": 1621510963.5067499
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 40934550,
+            "file_path": "results\\improved+increment1\\Balance.onnx",
+            "reward": 5373.319695238797,
+            "creation_time": 1621510963.5067499
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.2.0",
+        "mlagents_version": "0.25.0",
+        "torch_version": "1.8.1+cu111"
+    }
+}
